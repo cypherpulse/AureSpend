@@ -125,96 +125,9 @@ AureSpend addresses:
 
 ## Architecture & System Design
 
-### 1) High-Level Architecture
+### 1) How AureSpend Works
 
-```mermaid
-flowchart LR
-  UI[Client App] --> API[Server API]
-  API --> DB[(MongoDB)]
-  API --> Q[BullMQ]
-  Q --> W[Workers]
-  W --> D[KES Vault API]
-  W --> S[Stacks Service]
-  S --> C[USDCx Vault Contract]
-  Q --> R[(Redis)]
-```
-
-### 2) Detailed Component Design
-
-```mermaid
-flowchart TB
-  subgraph Client[Client - React/Vite]
-    C1[Dashboard]
-    C2[Topup Flow]
-    C3[Spend Flow]
-    C4[Wallet Hook]
-    C5[Polling Hook]
-    C6[API Service]
-    C1 --> C6
-    C2 --> C6
-    C3 --> C6
-    C2 --> C5
-    C3 --> C5
-    C1 --> C4
-    C2 --> C4
-    C3 --> C4
-  end
-
-  subgraph Server[Server - Node/TS]
-    S1[API Routes]
-    S2[Order Service]
-    S3[Order Repository]
-    S4[Settlement Queue]
-    S5[Queue Workers]
-    S6[KES Vault Service]
-    S7[Stacks Service]
-    S1 --> S2
-    S2 --> S3
-    S2 --> S4
-    S4 --> S5
-    S5 --> S6
-    S5 --> S7
-    S3 --> MDB[(MongoDB)]
-    S4 --> REDIS[(Redis)]
-  end
-
-  subgraph Contracts[Stacks / Clarity]
-    K1[USDCx Trait]
-    K2[USDCx Vault]
-    K3[USDCx Token]
-    K2 --> K1
-    K2 --> K3
-  end
-
-  C6 --> S1
-  S7 --> K2
-```
-
-### 3) Infrastructure & External Rails
-
-```mermaid
-flowchart LR
-  USER[User Wallet + M-PESA Phone]
-  WEB[Client Web App]
-  API[Backend API]
-  QUEUE[BullMQ Workers]
-  KESVAULT[Safaricom KES Vault]
-  STACKS[Stacks Network]
-  VAULT[USDCx Vault Contract]
-  TOKEN[USDCx Token Contract]
-
-  USER --> WEB
-  WEB --> API
-  API --> QUEUE
-  QUEUE --> KESVAULT
-  QUEUE --> STACKS
-  STACKS --> VAULT
-  VAULT --> TOKEN
-```
-
-## How AureSpend Works
-
-### Description
+#### Description
 
 AureSpend coordinates two payment rails in one user journey:
 - **Fiat rail** through M-PESA (KES Vault)
@@ -222,9 +135,9 @@ AureSpend coordinates two payment rails in one user journey:
 
 The backend orchestrates these rails using durable job queues and order-state tracking, while the frontend provides real-time visibility.
 
-### Flow Steps
+#### Flow Steps
 
-#### KES Vault Top-up (KSH → USDCx)
+##### KES Vault Top-up (KSH → USDCx)
 1. User enters KSH amount and confirms top-up.
 2. Backend initiates M-PESA STK push.
 3. KES Vault callback confirms payment.
@@ -232,7 +145,7 @@ The backend orchestrates these rails using durable job queues and order-state tr
 5. USDCx is sent to the user wallet.
 6. Order status becomes `completed`.
 
-#### KES Vault Spend (USDCx → KSH)
+##### KES Vault Spend (USDCx → KSH)
 1. User enters amount and phone number.
 2. User signs/sends USDCx transfer flow.
 3. Backend receives tx details and enqueues verification.
@@ -328,6 +241,93 @@ flowchart LR
   H -->|No| J[Retry with Backoff]
   J --> G
   J --> K[Mark Failed + Log]
+```
+
+### 2) High-Level Architecture
+
+```mermaid
+flowchart LR
+  UI[Client App] --> API[Server API]
+  API --> DB[(Storage)]
+  API --> Q[BullMQ]
+  Q --> W[Workers]
+  W --> D[KES Vault API]
+  W --> S[Stacks Service]
+  S --> C[USDCx Vault Contract]
+  Q --> R[(Redis)]
+```
+
+### 3) Detailed Component Design
+
+```mermaid
+flowchart TB
+  subgraph Client[Client - React/Vite]
+    C1[Dashboard]
+    C2[Topup Flow]
+    C3[Spend Flow]
+    C4[Wallet Hook]
+    C5[Polling Hook]
+    C6[API Service]
+    C1 --> C6
+    C2 --> C6
+    C3 --> C6
+    C2 --> C5
+    C3 --> C5
+    C1 --> C4
+    C2 --> C4
+    C3 --> C4
+  end
+
+  subgraph Server[Server - Node/TS]
+    S1[API Routes]
+    S2[Order Service]
+    S3[Order Repository]
+    S4[Settlement Queue]
+    S5[Queue Workers]
+    S6[KES Vault Service]
+    S7[Stacks Service]
+    S1 --> S2
+    S2 --> S3
+    S2 --> S4
+    S4 --> S5
+    S5 --> S6
+    S5 --> S7
+    S3 --> MDB[(MongoDB)]
+    S4 --> REDIS[(Redis)]
+  end
+
+  subgraph Contracts[Stacks / Clarity]
+    K1[USDCx Trait]
+    K2[USDCx Vault]
+    K3[USDCx Token]
+    K2 --> K1
+    K2 --> K3
+  end
+
+  C6 --> S1
+  S7 --> K2
+```
+
+### 4) Infrastructure & External Rails
+
+```mermaid
+flowchart LR
+  USER[User Wallet + M-PESA Phone]
+  WEB[Client Web App]
+  API[Backend API]
+  QUEUE[BullMQ Workers]
+  KESVAULT[Safaricom KES Vault]
+  STACKS[Stacks Network]
+  VAULT[USDCx Vault Contract]
+  TOKEN[USDCx Token Contract]
+
+  USER --> WEB
+  WEB --> API
+  API --> QUEUE
+  QUEUE --> KESVAULT
+  QUEUE --> STACKS
+  STACKS --> VAULT
+  VAULT --> TOKEN
 ```
 
 ## Why This System Is Strong, Secure, and Robust
