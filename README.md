@@ -15,7 +15,7 @@ Pay bills using USDCx to Kenyan shillings anywhere.
 
 Buy USDCx directly using KSH.
 
-AureSpend is a KES Vault ↔ USDCx settlement platform on Stacks, combining secure vault contracts, a queue-driven backend, and a modern web client for top-up/spend experiences.
+Millions of Africans earn crypto on Stacks but can’t spend it locally. AureSpend lets users instantly convert USDCx into local currency and vice versa, with no CEX and no P2P scams. We’re making Stacks crypto spendable for everyday life in Kenya and beyond.
 
 ## Description
 
