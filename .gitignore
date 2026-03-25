@@ -76,3 +76,4 @@ history.txt
 *.tmp
 *.temp
 *.ps1
+*.sh
