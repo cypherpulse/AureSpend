@@ -11,12 +11,7 @@
 
 ## AureSpend
 
-Pay bills using USDCx to Kenyan shillings anywhere.
-
-Buy USDCx directly using KSH.
-
-Millions of Africans earn crypto on Stacks but can’t spend it locally. AureSpend lets users instantly convert USDCx into local currency and vice versa, with no CEX and no P2P scams. We’re making Stacks crypto spendable for everyday life in Kenya and beyond.
-
+We help Kenyans buy USDCx, STX, and sBTC with Kenyan Shillings straight into their wallet, and easily spend their crypto, without the high fees, long waits, and safety risks of traditional exchanges and middlemen.
 ## Description
 
 **We are Stripe for USDCx payments on Stacks.**
